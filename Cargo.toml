@@ -5,3 +5,4 @@ authors = ["NerdyPepper <akshayoppiliappan@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+cursive = "0.10.0"
