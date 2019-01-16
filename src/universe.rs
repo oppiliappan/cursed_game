@@ -6,6 +6,7 @@ enum Cell {
     Alive = 1
 }
 
+#[derive(Clone)]
 pub struct Universe {
     width: u32,
     height: u32,
@@ -56,7 +57,7 @@ impl Universe {
         count
     }
 
-    pub fn tick(&mut self) {
+    pub fn tick(&mut self) -> String {
         let mut new = self.cells.clone();
         for row in 0..self.height {
             for col in 0..self.width {
@@ -76,6 +77,7 @@ impl Universe {
             }
         }
         self.cells = new;
+        format!("{}", self)
     }
 }
 
