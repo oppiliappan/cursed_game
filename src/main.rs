@@ -1,14 +1,52 @@
 mod universe;
 
-use std::time::Duration;
-use std::thread;
+use cursive::Cursive;
+use cursive::views::{ TextView, LinearLayout, Button, DummyView };
+use cursive::view::Identifiable;
+
+static WIDTH: u32 = 30;
+static HEIGHT: u32 = 30;
 
 fn main() {
-    println!("Hello, world!");
-    let mut myuniverse = universe::Universe::new(10, 10);
-    for _ in 0..100 {
-        println!("{}", myuniverse);
-        thread::sleep(Duration::from_millis(1000));
-        myuniverse.tick();
-    }
+
+    let mut main = Cursive::default();
+    let myuniverse = universe::Universe::new(WIDTH, HEIGHT);
+
+    let grid = TextView::new(format!("{}", myuniverse))
+        .with_id("grid");
+
+    let buttons = LinearLayout::vertical()
+        .child(Button::new("Tick", move |s| {
+            s.call_on_id("grid", |view: &mut TextView| {
+                view.set_content(format!("{}", myuniverse.tick()))
+            });
+        }))
+        .child(Button::new("Reload", |s| {
+            let fresh = universe::Universe::new(WIDTH, HEIGHT);
+            load_universe(s, &fresh);
+        }))
+        .child(DummyView)
+        .child(Button::new("Quit", |s| s.quit()));
+
+    main.add_layer(
+            LinearLayout::horizontal()
+            .child(grid)
+            .child(buttons)
+    );
+
+    main.run();
+
 }
+
+fn load_universe(main: &mut Cursive, u: &universe::Universe) {
+    main.call_on_id("grid", |view: &mut TextView| {
+        view.set_content(format!("{}", u))
+    });
+}
+
+// fn tick(main: &mut Cursive, u: &mut universe::Universe) {
+//     u.tick();
+//     main.call_on_id("grid", |view: &mut TextView| {
+//         view.set_content(format!("{}", u));
+//     });
+// }
